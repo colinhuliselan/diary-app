@@ -16,3 +16,5 @@ Simple app for keeping a diary. Consits of:
 docker compose build
 docker compose up
 ```
+
+- Naviate to http://localhost
