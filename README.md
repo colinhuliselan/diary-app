@@ -1,10 +1,10 @@
 # Diary app
 
-Simple app for keeping a diary. Consits of:
+Simple app for keeping a diary. Consists of:
 
 - `FastAPI` (`python`) backend
 - `nginx` reverse proxy
-- Simple html frontend
+- Simple `html` frontend
 - `mongodb` database
 
 ## Run
