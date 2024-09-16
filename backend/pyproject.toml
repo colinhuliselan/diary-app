@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "diary-backend"
+description = "Backend for diary application"
+readme = "README.md"
+requires-python = ">=3.12"
+version = "0.0.1"
+dependencies = [
+  "datetime",
+  "fastapi",
+  "pydantic",
+  "motor",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]

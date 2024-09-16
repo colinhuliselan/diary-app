@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diary Web App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            margin-bottom: 20px;
+        }
+        label, input, textarea, button {
+            display: block;
+            margin: 5px 0;
+        }
+        input, textarea {
+            width: 300px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Diary Web App</h1>
+
+    <!-- Section to add a diary entry -->
+    <div class="container">
+        <h2>Add Diary Entry</h2>
+        <form id="entry-form">
+            <label for="mood">Mood (0-10):</label>
+            <input type="number" id="mood" min="0" max="10" required>
+            
+            <label for="note">Note:</label>
+            <textarea type="string" id="note" rows="4" required></textarea>
+
+            <label for="date">Date (YYYY-MM-DD):</label>
+            <input type="date" id="date_create" required>
+            
+            <button type="submit">Add Entry</button>
+        </form>
+        <p id="add-result"></p>
+    </div>
+
+    <!-- Section to fetch a diary entry -->
+    <div class="container">
+        <h2>Fetch Diary Entry</h2>
+        <form id="fetch-form">
+            <label for="date">Date (YYYY-MM-DD):</label>
+            <input type="date" id="date_fetch" required>
+            
+            <button type="submit">Fetch Entry</button>
+        </form>
+        <p id="fetch-result"></p>
+    </div>
+
+    <script>
+        function setTodayDate() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('date_create').value = today;
+        }
+        window.onload = setTodayDate;
+
+        document.getElementById('entry-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const mood = document.getElementById('mood').value;
+            const note = document.getElementById('note').value;
+            const date = document.getElementById('date_create').value;
+
+            try {
+                const response = await fetch('http://localhost:8000/entries', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ mood: parseInt(mood), note, date })
+                });
+
+                if (response.ok) {
+                    document.getElementById('add-result').textContent = 'Entry added successfully!';
+                } else {
+                    document.getElementById('add-result').textContent = 'Failed to add entry.';
+                }
+            } catch (error) {
+                document.getElementById('add-result').textContent = 'Error: ' + error.message;
+            }
+        });
+
+        document.getElementById('fetch-form').addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const date = document.getElementById('date_fetch').value;
+
+        try {
+            const response = await fetch(`http://localhost:8000/entries?date=${date}`, {
+                method: 'GET'
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                
+                // Check if there are any entries
+                if (data.length > 0) {
+                    // Create a string to display all entries
+                    const resultText = data.map(entry => `Mood: ${entry.mood}, Note: ${entry.note}`).join('<br>');
+                    document.getElementById('fetch-result').innerHTML = resultText;
+                } else {
+                    document.getElementById('fetch-result').textContent = 'No entries found for the specified date.';
+                }
+            } else {
+                document.getElementById('fetch-result').textContent = 'Entry not found.';
+            }
+        } catch (error) {
+            document.getElementById('fetch-result').textContent = 'Error: ' + error.message;
+        }
+    });
+
+    </script>
+
+</body>
+</html>
